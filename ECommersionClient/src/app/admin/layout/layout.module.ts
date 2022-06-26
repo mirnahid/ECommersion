@@ -5,6 +5,7 @@ import { ComponentsModule } from './components/components.module';
 import { HeaderComponent } from './components/header/header.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { AppRoutingModule } from 'src/app/app-routing.module';
 
 
 
@@ -14,6 +15,7 @@ import { FooterComponent } from './components/footer/footer.component';
   ],
   imports: [
     CommonModule,
+    AppRoutingModule,
     ComponentsModule
   ],
   exports:[
