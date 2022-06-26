@@ -6,6 +6,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { AppRoutingModule } from 'src/app/app-routing.module';
+import {MatSidenavModule} from '@angular/material/sidenav';
 
 
 
@@ -16,7 +17,8 @@ import { AppRoutingModule } from 'src/app/app-routing.module';
   imports: [
     CommonModule,
     AppRoutingModule,
-    ComponentsModule
+    ComponentsModule,
+    MatSidenavModule
   ],
   exports:[
     HeaderComponent,
