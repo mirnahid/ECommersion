@@ -11,7 +11,7 @@ export class AlertifyService {
   message(message:string, options:Partial<AlertifyOptions>){
     alertify.set('notifier','delay',options.delay)
     alertify.set('notifier','position',options.position);
-    const msc= alertify[options.messageType](message);
+    const msc= alertify["error"](message);
 
     if(options.dissmissOthers){
       msc.dissmissOther();
@@ -24,7 +24,7 @@ export class AlertifyService {
 }
 
 export class AlertifyOptions{
-  messageType:MessageType = MessageType.Message;
+  messageType:MessageType = MessageType.Notify;
   position:Position = Position.ButtomRight;
   delay:number = 3;
   dissmissOthers:boolean = false;
