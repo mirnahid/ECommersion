@@ -17,7 +17,7 @@ namespace ECommersionAPI.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get() => Ok();
+        public IActionResult Get() => Ok("Test");
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id) => Ok();
@@ -37,7 +37,7 @@ namespace ECommersionAPI.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-
+            return Ok();
         }
     }
 }
