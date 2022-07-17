@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\ECommersionAPI.Application\ECommersionAPI.Application.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\ECommersionAPI.Infrastructure\ECommersionAPI.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Infrastructure\ECommersionAPI.Persistence\ECommersionAPI.Persistence.csproj" />
   </ItemGroup>
 
