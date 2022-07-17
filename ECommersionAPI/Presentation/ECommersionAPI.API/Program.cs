@@ -1,10 +1,16 @@
+using ECommersionAPI.Application.Validators.Products;
+using ECommersionAPI.Infrastructure.Filters;
 using ECommersionAPI.Persistence;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options=>options.Filters.Add<ValidationFilter>())
+                .AddFluentValidation(conf => conf.RegisterValidatorsFromAssemblyContaining<CreateProductValidator>())
+                .ConfigureApiBehaviorOptions(setupAction => setupAction.SuppressModelStateInvalidFilter = true);
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddPersistanceService();
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
