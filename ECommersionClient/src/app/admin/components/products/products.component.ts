@@ -20,7 +20,7 @@ export class ProductsComponent extends BaseComponent implements OnInit {
     this.showSpinner(SpinnerType.BallScaleMultiple);
     this.httpClientService.get({
       controller:"Products"
-    }).subscribe(data=>console.log(data));
+    }).subscribe();
   }
   
   @ViewChild(ListComponent) ListComponents:ListComponent;

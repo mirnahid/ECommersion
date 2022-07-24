@@ -8,6 +8,8 @@ import { ProductService } from 'src/app/services/common/model/product.service';
 import { ViewChild } from '@angular/core'
 import { MatPaginator } from '@angular/material/paginator';
 
+declare var $:any;
+
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -20,7 +22,7 @@ export class ListComponent extends BaseComponent implements OnInit {
    }
    
    
-  displayedColumns: string[] = ['name', 'stock', 'price','updatedDate'];
+  displayedColumns: string[] = ['name', 'stock', 'price','updatedDate','edit','delete'];
   dataSource: MatTableDataSource<List_Product>= null;  
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -37,6 +39,11 @@ export class ListComponent extends BaseComponent implements OnInit {
     // this.dataSource.paginator = this.paginator;
   }
 
+  // delete(id,event){
+  //   const img:HTMLImageElement=event.srcElement;
+  //   $(img.parentElement.parentElement).fadeOut(1000);
+  // }
+
   async pageChanged(){
    await this.getProducts();
   }
@@ -44,5 +51,6 @@ export class ListComponent extends BaseComponent implements OnInit {
   async ngOnInit() {
     await this.getProducts();
   }
+  
 
 }
