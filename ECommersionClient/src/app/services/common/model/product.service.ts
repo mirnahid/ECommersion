@@ -13,7 +13,6 @@ export class ProductService {
 
   create(product:Create_Product,successCallBack?:any,errorCallBack?:any){
     this.httpClientService.post({controller:"products"},product).subscribe(result=>{
-      alert("test");
       successCallBack();
     },(errorResponse:HttpErrorResponse)=>{
          const _error:Array<{key:string,value:Array<string>}>= errorResponse.error;

@@ -21,14 +21,6 @@ export class ProductsComponent extends BaseComponent implements OnInit {
     this.httpClientService.get({
       controller:"Products"
     }).subscribe(data=>console.log(data));
-
-    this.httpClientService.post({
-      controller:"Products"
-    },{
-      name:"test",
-      stock:100,
-      price:10
-    }).subscribe();
   }
   
   @ViewChild(ListComponent) ListComponents:ListComponent;
