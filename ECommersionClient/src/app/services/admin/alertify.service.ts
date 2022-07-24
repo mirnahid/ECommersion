@@ -13,9 +13,9 @@ export class AlertifyService {
     alertify.set('notifier','position',options.position);
     const msc= alertify["error"](message);
 
-    if(options.dissmissOthers){
-      msc.dissmissOther();
-    }
+    // if(options.dissmissOthers){
+    //   msc.dissmissOther();
+    // }
   }
 
   dissmiss(){

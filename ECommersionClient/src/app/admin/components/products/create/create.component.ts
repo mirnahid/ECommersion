@@ -31,12 +31,13 @@ export class CreateComponent extends BaseComponent implements OnInit {
 
     this.productService.create(create_product,()=>{
       this.hideSpinner(SpinnerType.BallAtom);
+      this.createdProduct.emit(create_product);
       this.alertify.message("mehsul elave edildi",{
         dissmissOthers:true,
         messageType:MessageType.Success,
         position:Position.TopRight
       });
-      this.createdProduct.emit(create_product);
+     
     },errorMessage=>{
        this.alertify.message(errorMessage,{
         dissmissOthers:true,
