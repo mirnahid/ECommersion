@@ -61,6 +61,9 @@ namespace ECommersionAPI.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
+            var model = await _productReadRepository.GetByIdAsync(id, false);
+            _productWriteRepository.Remove(model);
+            await _context.SaveChangesAsync();
             return Ok();
         }
     }
