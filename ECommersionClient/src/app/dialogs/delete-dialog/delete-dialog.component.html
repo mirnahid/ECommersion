@@ -1,0 +1,8 @@
+<h1 mat-dialog-title>Diqqet!</h1>
+<div mat-dialog-content>
+  <p>Silmek istediyinize eminsiniz?</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="close()">imtina</button>
+  <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Ok</button>
+</div>
