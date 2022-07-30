@@ -5,6 +5,7 @@ import { Create_Product } from 'src/app/contracts/create_product';
 import { AlertifyService, MessageType, Position } from 'src/app/services/admin/alertify.service';
 import { ProductService } from 'src/app/services/common/model/product.service';
 import { EventEmitter } from '@angular/core';
+import { FileUploadOptions } from 'src/app/services/common/file-upload/file-upload.component';
 
 @Component({
   selector: 'app-create',
@@ -21,6 +22,13 @@ export class CreateComponent extends BaseComponent implements OnInit {
   }
    
   @Output() createdProduct:EventEmitter<Create_Product>=new EventEmitter();
+  @Output() fileUploadOptions:Partial<FileUploadOptions>={
+    action:"upload",
+    controller:"products",
+    explanation:"sekilleri secin",
+    isAdminPage:true,
+    accept:".png,.jpg"
+  }
 
   create(name:HTMLInputElement,stock:HTMLInputElement,price:HTMLInputElement){
     this.showSpinner(SpinnerType.BallAtom);
