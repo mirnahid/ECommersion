@@ -4,6 +4,7 @@ using ECommersionAPI.Application.ViewModels.Products;
 using ECommersionAPI.Domain.Entities;
 using ECommersionAPI.Persistence.Contexts;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
 
 namespace ECommersionAPI.API.Controllers
 {
@@ -14,12 +15,14 @@ namespace ECommersionAPI.API.Controllers
         private readonly IProductWriteRepository _productWriteRepository;
         private readonly IProductReadRepository _productReadRepository;
         private readonly ECommersionAPIDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository, ECommersionAPIDbContext context)
+        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository, ECommersionAPIDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpGet]
@@ -64,6 +67,30 @@ namespace ECommersionAPI.API.Controllers
             var model = await _productReadRepository.GetByIdAsync(id, false);
             _productWriteRepository.Remove(model);
             await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Upload()
+        {
+            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "resource/product-images");
+
+            if (!Directory.Exists(uploadPath))
+                Directory.CreateDirectory(uploadPath);
+
+            Random random = new();
+
+            foreach (IFormFile file in Request.Form.Files)
+            {
+                string fullPath=Path.Combine(uploadPath, $"{random.Next()}{Path.GetExtension(file.FileName)}");
+
+                using FileStream fileStream = new(fullPath, FileMode.Create, FileAccess.Write,FileShare.None,1024*1024,false);
+
+                await file.CopyToAsync(fileStream);
+                await fileStream.FlushAsync();
+
+            }
+
             return Ok();
         }
     }
