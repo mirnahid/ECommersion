@@ -3,6 +3,7 @@ using System;
 using ECommersionAPI.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ECommersionAPI.Persistence.Migrations
 {
     [DbContext(typeof(ECommersionAPIDbContext))]
-    partial class ECommersionAPIDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220820193444_mig_2")]
+    partial class mig_2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,14 +55,6 @@ namespace ECommersionAPI.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Path")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -146,9 +140,6 @@ namespace ECommersionAPI.Persistence.Migrations
             modelBuilder.Entity("ECommersionAPI.Domain.Entities.InvoiceFile", b =>
                 {
                     b.HasBaseType("ECommersionAPI.Domain.Entities.File");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
 
                     b.HasDiscriminator().HasValue("InvoiceFile");
                 });
