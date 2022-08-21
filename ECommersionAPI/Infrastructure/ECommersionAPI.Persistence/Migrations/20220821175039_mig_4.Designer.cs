@@ -3,6 +3,7 @@ using System;
 using ECommersionAPI.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ECommersionAPI.Persistence.Migrations
 {
     [DbContext(typeof(ECommersionAPIDbContext))]
-    partial class ECommersionAPIDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220821175039_mig_4")]
+    partial class mig_4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -145,6 +147,23 @@ namespace ECommersionAPI.Persistence.Migrations
                     b.HasIndex("ProductsId");
 
                     b.ToTable("OrderProduct");
+                });
+
+            modelBuilder.Entity("ECommersionAPI.Domain.Entities.InvoiceFile", b =>
+                {
+                    b.HasBaseType("ECommersionAPI.Domain.Entities.File");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.HasDiscriminator().HasValue("InvoiceFile");
+                });
+
+            modelBuilder.Entity("ECommersionAPI.Domain.Entities.ProductImageFile", b =>
+                {
+                    b.HasBaseType("ECommersionAPI.Domain.Entities.File");
+
+                    b.HasDiscriminator().HasValue("ProductImageFile");
                 });
 
             modelBuilder.Entity("ECommersionAPI.Domain.Entities.Order", b =>

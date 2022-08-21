@@ -1,4 +1,5 @@
-﻿using ECommersionAPI.Application.Repositories;
+﻿using ECommersionAPI.Application.Abstractions.Storage;
+using ECommersionAPI.Application.Repositories;
 using ECommersionAPI.Application.RequestParameters;
 using ECommersionAPI.Application.Services;
 using ECommersionAPI.Application.ViewModels.Products;
@@ -18,6 +19,7 @@ namespace ECommersionAPI.API.Controllers
         private readonly ECommersionAPIDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IFileService _fileService;
+        private readonly IStorageService _storageService;
 
         public ProductsController(IProductWriteRepository productWriteRepository,
                                 IProductReadRepository productReadRepository,

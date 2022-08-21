@@ -1,6 +1,8 @@
 using ECommersionAPI.Application.Validators.Products;
 using ECommersionAPI.Infrastructure;
+using ECommersionAPI.Infrastructure.Enums;
 using ECommersionAPI.Infrastructure.Filters;
+using ECommersionAPI.Infrastructure.Services.Storage.Local;
 using ECommersionAPI.Persistence;
 using FluentValidation.AspNetCore;
 
@@ -15,6 +17,8 @@ builder.Services.AddControllers(options=>options.Filters.Add<ValidationFilter>()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddPersistanceService();
 builder.Services.AddInfrastructureService();
+//builder.Services.AddStorage(StorageType.Local);
+builder.Services.AddStorage<LocalStorage>();
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
 {
     policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
