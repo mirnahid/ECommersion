@@ -3,6 +3,7 @@ using System;
 using ECommersionAPI.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ECommersionAPI.Persistence.Migrations
 {
     [DbContext(typeof(ECommersionAPIDbContext))]
-    partial class ECommersionAPIDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220820193845_mig_3")]
+    partial class mig_3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,11 +65,6 @@ namespace ECommersionAPI.Persistence.Migrations
                     b.Property<string>("Path")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<string>("Storage")
-                        .IsRequired()
-                        .HasColumnType("text");
-
 
                     b.HasKey("Id");
 
