@@ -18,20 +18,19 @@ namespace ECommersionAPI.API.Controllers
         private readonly IProductReadRepository _productReadRepository;
         private readonly ECommersionAPIDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IFileService _fileService;
         private readonly IStorageService _storageService;
 
         public ProductsController(IProductWriteRepository productWriteRepository,
                                 IProductReadRepository productReadRepository,
                                 ECommersionAPIDbContext context,
                                 IWebHostEnvironment webHostEnvironment
-                                , IFileService fileService)
+                                , IStorageService storageService)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
             _context = context;
             _webHostEnvironment = webHostEnvironment;
-            _fileService=fileService;
+            _storageService=storageService;
         }
 
         [HttpGet]
@@ -82,7 +81,8 @@ namespace ECommersionAPI.API.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Upload()
         {
-            await _fileService.UploadAsync("resource/product-images", Request.Form.Files);
+            //await _fileService.UploadAsync("resource/product-images", Request.Form.Files);
+            await _storageService.UploadAsync("files",Request.Form.Files);
 
             return Ok();
         }

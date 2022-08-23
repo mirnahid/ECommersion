@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ECommersionAPI.Infrastructure.Services.Storage.Local
 {
-    public class LocalStorage : ILocalStorage
+    public class LocalStorage :Storage, ILocalStorage
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
 
@@ -22,8 +22,8 @@ namespace ECommersionAPI.Infrastructure.Services.Storage.Local
             return directory.GetFiles().Select(f=> f.Name).ToList();
         }
 
-        public bool HasFile(string pathOrContainerName)
-            =>File.Exists($"{pathOrContainerName}");
+        public bool HasFile(string pathOrContainerName,string fileName)
+            =>File.Exists($"{pathOrContainerName}/{fileName}");
 
         public async Task<List<(string fileName, string pathOrContainerName)>> UploadAsync(string pathOrContainerName, IFormFileCollection files)
         {
@@ -37,8 +37,9 @@ namespace ECommersionAPI.Infrastructure.Services.Storage.Local
 
             foreach (IFormFile file in files)
             {
-                var result = await CopyFileAsync($"{uploadPath}\\{file.Name}", file);
-                datas.Add((file.Name, $"{uploadPath}\\{file.Name}"));
+                string fileNewName = await FileRenameAsync(pathOrContainerName, file.Name, HasFile);
+                var result = await CopyFileAsync($"{uploadPath}\\{fileNewName}", file);
+                datas.Add((fileNewName, $"{uploadPath}\\{fileNewName}"));
                 results.Add(result);
             }
 
