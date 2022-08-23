@@ -2,6 +2,7 @@ using ECommersionAPI.Application.Validators.Products;
 using ECommersionAPI.Infrastructure;
 using ECommersionAPI.Infrastructure.Enums;
 using ECommersionAPI.Infrastructure.Filters;
+using ECommersionAPI.Infrastructure.Services.Storage.Azure;
 using ECommersionAPI.Infrastructure.Services.Storage.Local;
 using ECommersionAPI.Persistence;
 using FluentValidation.AspNetCore;
@@ -18,7 +19,7 @@ builder.Services.AddControllers(options=>options.Filters.Add<ValidationFilter>()
 builder.Services.AddPersistanceService();
 builder.Services.AddInfrastructureService();
 //builder.Services.AddStorage(StorageType.Local);
-builder.Services.AddStorage<LocalStorage>();
+builder.Services.AddStorage<AzureStorage>();
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
 {
     policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();

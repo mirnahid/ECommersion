@@ -1,8 +1,7 @@
 ﻿using ECommersionAPI.Application.Abstractions.Storage;
-using ECommersionAPI.Application.Services;
 using ECommersionAPI.Infrastructure.Enums;
-using ECommersionAPI.Infrastructure.Services;
 using ECommersionAPI.Infrastructure.Services.Storage;
+using ECommersionAPI.Infrastructure.Services.Storage.Azure;
 using ECommersionAPI.Infrastructure.Services.Storage.Local;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,7 +15,7 @@ namespace ECommersionAPI.Infrastructure
             services.AddScoped<IStorageService, StorageService>();
         }
 
-        public static void AddStorage<T>(this IServiceCollection services) where T : class, IStorage
+        public static void AddStorage<T>(this IServiceCollection services) where T : Storage, IStorage
         {
             services.AddScoped<IStorage, T>();
         }
@@ -29,7 +28,7 @@ namespace ECommersionAPI.Infrastructure
                     services.AddScoped<IStorage, LocalStorage>();
                     break;
                 case StorageType.Azure:
-                    services.AddScoped<IStorage, LocalStorage>();
+                    services.AddScoped<IStorage, AzureStorage>();
                     break;
                 case StorageType.AWS:
                     break;
