@@ -11,21 +11,17 @@ namespace ECommersionAPI.Infrastructure.Services.Storage
             {
                 string extension = Path.GetExtension(fileName);
                 string newFileName = string.Empty;
-
                 if (first)
                 {
                     string oldName = Path.GetFileNameWithoutExtension(fileName);
                     newFileName = $"{NameOperation.CharacterRegulatory(oldName)}{extension}";
                 }
-
                 else
                 {
                     newFileName = fileName;
                     int indexNo1 = newFileName.IndexOf("-");
                     if (indexNo1 == -1)
-                    {
                         newFileName = $"{Path.GetFileNameWithoutExtension(newFileName)}-2{extension}";
-                    }
                     else
                     {
                         int lastIndex = 0;
@@ -33,7 +29,6 @@ namespace ECommersionAPI.Infrastructure.Services.Storage
                         {
                             lastIndex = indexNo1;
                             indexNo1 = newFileName.IndexOf("-", indexNo1 + 1);
-
                             if (indexNo1 == -1)
                             {
                                 indexNo1 = lastIndex;
@@ -46,28 +41,21 @@ namespace ECommersionAPI.Infrastructure.Services.Storage
 
                         if (int.TryParse(fileNo, out int _fileNo))
                         {
-                            ++_fileNo;
+                            _fileNo++;
                             newFileName = newFileName.Remove(indexNo1 + 1, indexNo2 - indexNo1 - 1)
-                                                     .Insert(indexNo1 + 1, _fileNo.ToString());
+                                                .Insert(indexNo1 + 1, _fileNo.ToString());
                         }
-
                         else
-                        {
-
-                        }
+                            newFileName = $"{Path.GetFileNameWithoutExtension(newFileName)}-2{extension}";
 
                     }
                 }
 
                 //if (File.Exists($"{path}\\{newFileName}"))
-                if (hasFileMethod(pathOrContainerName, fileName))
-                {
-                    return await FileRenameAsync(pathOrContainerName, $"{Path.GetFileNameWithoutExtension(fileName)}-2{extension}", hasFileMethod, false);
-                }
+                if (hasFileMethod(pathOrContainerName, newFileName))
+                    return await FileRenameAsync(pathOrContainerName, newFileName, hasFileMethod, false);
                 else
-                {
                     return newFileName;
-                }
             });
 
             return newFileName;
