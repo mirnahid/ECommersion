@@ -19,18 +19,21 @@ namespace ECommersionAPI.API.Controllers
         private readonly ECommersionAPIDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStorageService _storageService;
+        private readonly IProductImageFileWriteRepository _productImageFileWriteRepository;
 
         public ProductsController(IProductWriteRepository productWriteRepository,
                                 IProductReadRepository productReadRepository,
                                 ECommersionAPIDbContext context,
-                                IWebHostEnvironment webHostEnvironment
-                                , IStorageService storageService)
+                                IWebHostEnvironment webHostEnvironment,
+                                IStorageService storageService,
+                                IProductImageFileWriteRepository productImageFileWriteRepository)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
             _context = context;
             _webHostEnvironment = webHostEnvironment;
             _storageService=storageService;
+            _productImageFileWriteRepository = productImageFileWriteRepository;
         }
 
         [HttpGet]
@@ -79,11 +82,21 @@ namespace ECommersionAPI.API.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Upload()
+        public async Task<IActionResult> Upload(string id)
         {
-            //await _fileService.UploadAsync("resource/product-images", Request.Form.Files);
-            await _storageService.UploadAsync("files",Request.Form.Files);
+            List<(string fileName,string pathOrContainerName)> result= await _storageService.UploadAsync("photo-images",Request.Form.Files);
 
+            Product product= await _productReadRepository.GetByIdAsync(id);
+
+            await _productImageFileWriteRepository.AddRangeAsync(result.Select(x => new ProductImageFile
+            {
+                FileName=x.fileName,
+                Path=x.pathOrContainerName,
+                Storage=_storageService.StorageName,
+                Products= new List<Product>() { product}
+            }).ToList());
+
+            await _productImageFileWriteRepository.SaveAsync();
             return Ok();
         }
     }
