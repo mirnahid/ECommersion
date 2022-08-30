@@ -1,12 +1,14 @@
 ﻿using ECommersionAPI.Application.Abstractions.Storage;
+using ECommersionAPI.Application.Features.Commands.CreateProduct;
+using ECommersionAPI.Application.Features.Queries.GetAllProduct;
 using ECommersionAPI.Application.Repositories;
 using ECommersionAPI.Application.RequestParameters;
-using ECommersionAPI.Application.Services;
 using ECommersionAPI.Application.ViewModels.Products;
 using ECommersionAPI.Domain.Entities;
 using ECommersionAPI.Persistence.Contexts;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.IO;
+using System.Net;
 
 namespace ECommersionAPI.API.Controllers
 {
@@ -21,49 +23,40 @@ namespace ECommersionAPI.API.Controllers
         private readonly IStorageService _storageService;
         private readonly IProductImageFileWriteRepository _productImageFileWriteRepository;
 
+        private readonly IMediator _mediator;
+
         public ProductsController(IProductWriteRepository productWriteRepository,
                                 IProductReadRepository productReadRepository,
                                 ECommersionAPIDbContext context,
                                 IWebHostEnvironment webHostEnvironment,
                                 IStorageService storageService,
-                                IProductImageFileWriteRepository productImageFileWriteRepository)
+                                IProductImageFileWriteRepository productImageFileWriteRepository,
+                                IMediator mediator)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
             _context = context;
             _webHostEnvironment = webHostEnvironment;
-            _storageService=storageService;
+            _storageService = storageService;
             _productImageFileWriteRepository = productImageFileWriteRepository;
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public IActionResult Get([FromQuery] Pagination pagination)
+        public async Task<IActionResult> Get([FromQuery] GetAllProductQueryRequest getAllProductQueryRequest)
         {
-            var totalCount = _productReadRepository.GetAll().Count();
-            var products = _productReadRepository.GetAll(false)
-                                                .Skip(pagination.Page * pagination.Size)
-                                                .Take(pagination.Size)
-                                                .Select(p => new
-                                                {
-                                                    p.Id,
-                                                    p.Name,
-                                                    p.Stock,
-                                                    p.Price,
-                                                    p.UpdatedDate
-                                                });
-
-            return Ok(new { totalCount, products });
+           GetAllProductQueryResponse response= await _mediator.Send(getAllProductQueryRequest);
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id) => Ok();
 
         [HttpPost]
-        public async Task<IActionResult> Post(VM_Create_Products model)
+        public async Task<IActionResult> Post(CreateProductCommandRequest request)
         {
-            await _productWriteRepository.AddAsync(new Product { Name = model.Name, Price = model.Price, Stock = model.Stock });
-            await _context.SaveChangesAsync();
-            return Ok();
+           CreateProductCommandResponse response= await _mediator.Send(request);
+            return StatusCode((int)HttpStatusCode.Created);
         }
 
         [HttpPut]
@@ -84,16 +77,16 @@ namespace ECommersionAPI.API.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Upload(string id)
         {
-            List<(string fileName,string pathOrContainerName)> result= await _storageService.UploadAsync("photo-images",Request.Form.Files);
+            List<(string fileName, string pathOrContainerName)> result = await _storageService.UploadAsync("photo-images", Request.Form.Files);
 
-            Product product= await _productReadRepository.GetByIdAsync(id);
+            Product product = await _productReadRepository.GetByIdAsync(id);
 
             await _productImageFileWriteRepository.AddRangeAsync(result.Select(x => new ProductImageFile
             {
-                FileName=x.fileName,
-                Path=x.pathOrContainerName,
-                Storage=_storageService.StorageName,
-                Products= new List<Product>() { product}
+                FileName = x.fileName,
+                Path = x.pathOrContainerName,
+                Storage = _storageService.StorageName,
+                Products = new List<Product>() { product }
             }).ToList());
 
             await _productImageFileWriteRepository.SaveAsync();
