@@ -1,23 +1,23 @@
 using ECommersionAPI.Application.Validators.Products;
-using ECommersionAPI.Infrastructure;
-using ECommersionAPI.Infrastructure.Enums;
 using ECommersionAPI.Infrastructure.Filters;
-using ECommersionAPI.Infrastructure.Services.Storage.Azure;
-using ECommersionAPI.Infrastructure.Services.Storage.Local;
 using ECommersionAPI.Persistence;
+using ECommersionAPI.Application;
 using FluentValidation.AspNetCore;
+using ECommersionAPI.Infrastructure;
+using ECommersionAPI.Infrastructure.Services.Storage.Azure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers(options=>options.Filters.Add<ValidationFilter>())
+builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>())
                 .AddFluentValidation(conf => conf.RegisterValidatorsFromAssemblyContaining<CreateProductValidator>())
                 .ConfigureApiBehaviorOptions(setupAction => setupAction.SuppressModelStateInvalidFilter = true);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddPersistanceService();
 builder.Services.AddInfrastructureService();
+builder.Services.AddApplicationServices();
 //builder.Services.AddStorage(StorageType.Local);
 builder.Services.AddStorage<AzureStorage>();
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
