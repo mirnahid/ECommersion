@@ -1,7 +1,7 @@
 ﻿using ECommersionAPI.Application.RequestParameters;
 using MediatR;
 
-namespace ECommersionAPI.Application.Features.Queries.GetAllProduct
+namespace ECommersionAPI.Application.Features.Queries.Product.GetAllProduct
 {
     public class GetAllProductQueryRequest:IRequest<GetAllProductQueryResponse>
     {

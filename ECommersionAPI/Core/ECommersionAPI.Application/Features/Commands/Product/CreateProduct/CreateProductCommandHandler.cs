@@ -2,7 +2,7 @@
 using ECommersionAPI.Domain.Entities;
 using MediatR;
 
-namespace ECommersionAPI.Application.Features.Commands.CreateProduct
+namespace ECommersionAPI.Application.Features.Commands.Product.CreateProduct
 {
     public class CreateProductCommandHandler : IRequestHandler<CreateProductCommandRequest, CreateProductCommandResponse>
     {

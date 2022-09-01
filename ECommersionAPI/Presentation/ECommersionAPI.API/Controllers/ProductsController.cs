@@ -1,6 +1,12 @@
 ﻿using ECommersionAPI.Application.Abstractions.Storage;
-using ECommersionAPI.Application.Features.Commands.CreateProduct;
-using ECommersionAPI.Application.Features.Queries.GetAllProduct;
+using ECommersionAPI.Application.Features.Commands.Product.CreateProduct;
+using ECommersionAPI.Application.Features.Commands.Product.ProductImageFile.UploadProductImage;
+using ECommersionAPI.Application.Features.Commands.Product.RemoveProduct;
+using ECommersionAPI.Application.Features.Commands.Product.RemoveProductImage;
+using ECommersionAPI.Application.Features.Commands.Product.UpdateProduct;
+using ECommersionAPI.Application.Features.Queries.Product.GetAllProduct;
+using ECommersionAPI.Application.Features.Queries.Product.GetByIdProduct;
+using ECommersionAPI.Application.Features.Queries.Product.ProductImageFile;
 using ECommersionAPI.Application.Repositories;
 using ECommersionAPI.Application.RequestParameters;
 using ECommersionAPI.Application.ViewModels.Products;
@@ -16,29 +22,11 @@ namespace ECommersionAPI.API.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly IProductWriteRepository _productWriteRepository;
-        private readonly IProductReadRepository _productReadRepository;
-        private readonly ECommersionAPIDbContext _context;
-        private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IStorageService _storageService;
-        private readonly IProductImageFileWriteRepository _productImageFileWriteRepository;
 
         private readonly IMediator _mediator;
 
-        public ProductsController(IProductWriteRepository productWriteRepository,
-                                IProductReadRepository productReadRepository,
-                                ECommersionAPIDbContext context,
-                                IWebHostEnvironment webHostEnvironment,
-                                IStorageService storageService,
-                                IProductImageFileWriteRepository productImageFileWriteRepository,
-                                IMediator mediator)
+        public ProductsController(IMediator mediator)
         {
-            _productWriteRepository = productWriteRepository;
-            _productReadRepository = productReadRepository;
-            _context = context;
-            _webHostEnvironment = webHostEnvironment;
-            _storageService = storageService;
-            _productImageFileWriteRepository = productImageFileWriteRepository;
             _mediator = mediator;
         }
 
@@ -49,8 +37,13 @@ namespace ECommersionAPI.API.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id) => Ok();
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> Get([FromRoute]GetByIdProductQueryRequest getByIdProductQueryRequest)
+        {
+            GetByIdProductQueryResponse response= await _mediator.Send(getByIdProductQueryRequest);
+
+            return Ok(response);
+        }
 
         [HttpPost]
         public async Task<IActionResult> Post(CreateProductCommandRequest request)
@@ -60,37 +53,43 @@ namespace ECommersionAPI.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(VM_Update_Product model)
+        public async Task<IActionResult> Put([FromBody]UpdateProductCommandRequest updateProductCommandRequest)
         {
+            UpdateProductCommandResponse response= await _mediator.Send(updateProductCommandRequest);
+
             return Ok();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> Delete([FromRoute]RemoveProductCommandRequest removeProductCommandRequest)
         {
-            var model = await _productReadRepository.GetByIdAsync(id, false);
-            _productWriteRepository.Remove(model);
-            await _context.SaveChangesAsync();
+            RemoveProductCommandResponse response= await _mediator.Send(removeProductCommandRequest);
+
             return Ok();
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Upload(string id)
+        public async Task<IActionResult> Upload([FromQuery] UploadProductImageCommandRequest uploadProductImageCommand)
         {
-            List<(string fileName, string pathOrContainerName)> result = await _storageService.UploadAsync("photo-images", Request.Form.Files);
-
-            Product product = await _productReadRepository.GetByIdAsync(id);
-
-            await _productImageFileWriteRepository.AddRangeAsync(result.Select(x => new ProductImageFile
-            {
-                FileName = x.fileName,
-                Path = x.pathOrContainerName,
-                Storage = _storageService.StorageName,
-                Products = new List<Product>() { product }
-            }).ToList());
-
-            await _productImageFileWriteRepository.SaveAsync();
+            uploadProductImageCommand.Files = Request.Form.Files;
+            await _mediator.Send(uploadProductImageCommand);
             return Ok();
+        }
+
+        [HttpDelete("[action]/{Id}")]
+        public async Task<IActionResult> DeleteProductImage([FromRoute]RemoveProductImageCommandRequest removeProductImageCommandRequest,[FromQuery]string imageId)
+        {
+            removeProductImageCommandRequest.ImageId=imageId;
+            RemoveProductImageCommandResponse response= await _mediator.Send(removeProductImageCommandRequest);
+            return Ok();
+        }
+
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetProductImages([FromRoute]GetProductImagesQueryRequest getProductImagesQueryRequest)
+        {
+           List<GetProductImagesQueryReponse> reponse= await _mediator.Send(getProductImagesQueryRequest);
+
+            return Ok(reponse);
         }
     }
 }

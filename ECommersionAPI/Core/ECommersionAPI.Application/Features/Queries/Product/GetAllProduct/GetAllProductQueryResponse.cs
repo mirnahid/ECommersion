@@ -1,4 +1,4 @@
-﻿namespace ECommersionAPI.Application.Features.Queries.GetAllProduct
+﻿namespace ECommersionAPI.Application.Features.Queries.Product.GetAllProduct
 {
     public class GetAllProductQueryResponse
     {
