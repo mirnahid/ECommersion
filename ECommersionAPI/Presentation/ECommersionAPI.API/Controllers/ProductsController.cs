@@ -1,4 +1,3 @@
-using ECommersionAPI.Application.Abstractions.Storage;
 using ECommersionAPI.Application.Features.Commands.Product.CreateProduct;
 using ECommersionAPI.Application.Features.Commands.Product.ProductImageFile.UploadProductImage;
 using ECommersionAPI.Application.Features.Commands.Product.RemoveProduct;
@@ -6,15 +5,7 @@ using ECommersionAPI.Application.Features.Commands.Product.RemoveProductImage;
 using ECommersionAPI.Application.Features.Commands.Product.UpdateProduct;
 using ECommersionAPI.Application.Features.Queries.Product.GetAllProduct;
 using ECommersionAPI.Application.Features.Queries.Product.GetByIdProduct;
-using ECommersionAPI.Application.Features.Queries.Product.ProductImageFile
-using ECommersionAPI.Application.Abstractions.Storage;
-using ECommersionAPI.Application.Features.Commands.CreateProduct;
-using ECommersionAPI.Application.Features.Queries.GetAllProduct
-using ECommersionAPI.Application.Repositories;
-using ECommersionAPI.Application.RequestParameters;
-using ECommersionAPI.Application.ViewModels.Products;
-using ECommersionAPI.Domain.Entities;
-using ECommersionAPI.Persistence.Contexts;
+using ECommersionAPI.Application.Features.Queries.Product.ProductImageFile;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -25,6 +16,7 @@ namespace ECommersionAPI.API.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
+
         private readonly IMediator _mediator;
 
         public ProductsController(IMediator mediator)
@@ -35,14 +27,14 @@ namespace ECommersionAPI.API.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] GetAllProductQueryRequest getAllProductQueryRequest)
         {
-           GetAllProductQueryResponse response= await _mediator.Send(getAllProductQueryRequest);
+            GetAllProductQueryResponse response = await _mediator.Send(getAllProductQueryRequest);
             return Ok(response);
         }
 
         [HttpGet("{Id}")]
-        public async Task<IActionResult> Get([FromRoute]GetByIdProductQueryRequest getByIdProductQueryRequest)
+        public async Task<IActionResult> Get([FromRoute] GetByIdProductQueryRequest getByIdProductQueryRequest)
         {
-            GetByIdProductQueryResponse response= await _mediator.Send(getByIdProductQueryRequest);
+            GetByIdProductQueryResponse response = await _mediator.Send(getByIdProductQueryRequest);
 
             return Ok(response);
         }
@@ -50,22 +42,22 @@ namespace ECommersionAPI.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(CreateProductCommandRequest request)
         {
-           CreateProductCommandResponse response= await _mediator.Send(request);
+            CreateProductCommandResponse response = await _mediator.Send(request);
             return StatusCode((int)HttpStatusCode.Created);
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put([FromBody]UpdateProductCommandRequest updateProductCommandRequest)
+        public async Task<IActionResult> Put([FromBody] UpdateProductCommandRequest updateProductCommandRequest)
         {
-            UpdateProductCommandResponse response= await _mediator.Send(updateProductCommandRequest);
+            UpdateProductCommandResponse response = await _mediator.Send(updateProductCommandRequest);
 
             return Ok();
         }
 
         [HttpDelete("{Id}")]
-        public async Task<IActionResult> Delete([FromRoute]RemoveProductCommandRequest removeProductCommandRequest)
+        public async Task<IActionResult> Delete([FromRoute] RemoveProductCommandRequest removeProductCommandRequest)
         {
-            RemoveProductCommandResponse response= await _mediator.Send(removeProductCommandRequest);
+            RemoveProductCommandResponse response = await _mediator.Send(removeProductCommandRequest);
 
             return Ok();
         }
@@ -79,47 +71,19 @@ namespace ECommersionAPI.API.Controllers
         }
 
         [HttpDelete("[action]/{Id}")]
-        public async Task<IActionResult> DeleteProductImage([FromRoute]RemoveProductImageCommandRequest removeProductImageCommandRequest,[FromQuery]string imageId)
+        public async Task<IActionResult> DeleteProductImage([FromRoute] RemoveProductImageCommandRequest removeProductImageCommandRequest, [FromQuery] string imageId)
         {
-            removeProductImageCommandRequest.ImageId=imageId;
-            RemoveProductImageCommandResponse response= await _mediator.Send(removeProductImageCommandRequest);
+            removeProductImageCommandRequest.ImageId = imageId;
+            RemoveProductImageCommandResponse response = await _mediator.Send(removeProductImageCommandRequest);
             return Ok();
         }
 
         [HttpGet("[action]/{id}")]
-        public async Task<IActionResult> GetProductImages([FromRoute]GetProductImagesQueryRequest getProductImagesQueryRequest)
+        public async Task<IActionResult> GetProductImages([FromRoute] GetProductImagesQueryRequest getProductImagesQueryRequest)
         {
-           List<GetProductImagesQueryReponse> reponse= await _mediator.Send(getProductImagesQueryRequest);
+            List<GetProductImagesQueryReponse> reponse = await _mediator.Send(getProductImagesQueryRequest);
 
             return Ok(reponse);
-        }
-
-        [HttpGet("[action]/{id}")]
-        public async Task<IActionResult> GetProductImages(string id)
-        {
-            var product = await _productReadRepository.Table.Include(x => x.ProductImageFiles)
-                  .FirstOrDefaultAsync(x => x.Id == Guid.Parse(id));
-
-            return Ok(product.ProductImageFiles.Select(x => new
-            {
-                Path = $"{_configuration["BaseStorageUrl"]}/{x.Path}",
-                x.FileName,
-                x.Id
-            }));
-        }
-
-        [HttpDelete("[action]/{id}")]
-        public async Task<IActionResult> DeleteProductImage(string id, string imageId)
-        {
-            var product = await _productReadRepository.Table.Include(x => x.ProductImageFiles)
-                 .FirstOrDefaultAsync(x => x.Id == Guid.Parse(id));
-
-            var productImageFile = product.ProductImageFiles.FirstOrDefault(x => x.Id == Guid.Parse(imageId));
-            product.ProductImageFiles.Remove(productImageFile);
-            await _productWriteRepository.SaveAsync();
-
-            return Ok();
-
         }
     }
 }

@@ -1,0 +1,35 @@
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+        <form [formGroup]="frm" (ngSubmit)="onSubmit(frm.value)">
+            <div class="form-group">
+                <label for="namesurname">Name and Surname *</label>
+                <input type="text" formControlName="namesurname" class="form-control" id="namesurname" aria-describedby="emailHelp" placeholder="name and surname" [ngClass]="{'is-invalid':submited&&component.namesurname.errors}" >
+                <small *ngIf="submited&&component.namesurname.errors?.required" class="form-text text-muted" >Name and surmane is required.</small>
+              </div>
+            <div class="form-group">
+              <label for="username">User Name *</label>
+              <input type="text" formControlName="username" class="form-control" id="username" aria-describedby="emailHelp" placeholder="username" [ngClass]="{'is-invalid':submited&&component.username.errors}">
+              <small *ngIf="submited&&component.username.errors?.required" class="form-text text-muted" >Username is required.</small>
+            </div>
+            <div class="form-group">
+                <label for="email">Email * </label>
+                <input type="email" formControlName="email" class="form-control" id="email" placeholder="email" [ngClass]="{'is-invalid':submited&&component.email.errors}">
+                <small *ngIf="submited&&component.email.errors?.required" class="form-text text-muted" >Email is required.</small>
+              </div>
+            <div class="form-group">
+              <label for="password">Password *</label>
+              <input type="password" formControlName="password" class="form-control" id="password" placeholder="password" [ngClass]="{'is-invalid':submited&&component.password.errors}">
+              <small *ngIf="submited&&component.password.errors?.required" class="form-text text-muted" >Email is required.</small>
+            </div>
+            <div class="form-group">
+                <label for="confirmpassword">Confirm password *</label>
+                <input type="password" formControlName="confirmpassword" class="form-control" id="confirmpassword" placeholder="confirm password" [ngClass]="{'is-invalid':submited&&component.confirmpassword.errors}">
+                <small *ngIf="submited&&component.confirmpassword.errors?.required" class="form-text text-muted" >Email is required.</small>
+              </div>
+              <br>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+    </div>
+    <div class="col-md-3"></div>
+</div>
