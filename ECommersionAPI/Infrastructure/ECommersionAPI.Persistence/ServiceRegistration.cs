@@ -1,4 +1,5 @@
 ﻿using ECommersionAPI.Application.Repositories;
+using ECommersionAPI.Domain.Entities.Identity;
 using ECommersionAPI.Persistence.Contexts;
 using ECommersionAPI.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,14 @@ namespace ECommersionAPI.Persistence
         public static void AddPersistanceService(this IServiceCollection services)
         {
             services.AddDbContext<ECommersionAPIDbContext>(options => options.UseNpgsql(Configuration.ConnectionString));
+            services.AddIdentity<AppUser, AppRole>(options =>
+            {
+                options.Password.RequiredLength = 3;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+            }).AddEntityFrameworkStores<ECommersionAPIDbContext>();
             services.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
             services.AddScoped<ICustomerWriteRepository, CustomerWriteRepository>();
             services.AddScoped<IOrderReadRepository, OrderReadRepository>();

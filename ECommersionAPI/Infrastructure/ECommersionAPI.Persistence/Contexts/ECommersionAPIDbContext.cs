@@ -1,10 +1,12 @@
 ﻿using ECommersionAPI.Domain.Entities;
 using ECommersionAPI.Domain.Entities.Common;
+using ECommersionAPI.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommersionAPI.Persistence.Contexts
 {
-    public class ECommersionAPIDbContext : DbContext
+    public class ECommersionAPIDbContext : IdentityDbContext<AppUser,AppRole,string>
     {
         public ECommersionAPIDbContext(DbContextOptions<ECommersionAPIDbContext> options) : base(options)
         {
