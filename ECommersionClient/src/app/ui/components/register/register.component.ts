@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { Create_User } from 'src/app/contracts/users/create_user';
 import { User } from 'src/app/entities/user';
 import { UserService } from 'src/app/services/common/model/user.service';
+import { BaseComponent } from 'src/app/base/base.component';
 import { CustomToastrService, ToastrMessageType, ToastrPosition } from 'src/app/services/ui/custom-toastr.service';
 
 @Component({
@@ -10,9 +12,11 @@ import { CustomToastrService, ToastrMessageType, ToastrPosition } from 'src/app/
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent extends BaseComponent implements OnInit {
 
-  constructor(private formbuilder:FormBuilder,private userService:UserService,private toastrService:CustomToastrService) { }
+  constructor(private formbuilder:FormBuilder,private userService:UserService,private toastrService:CustomToastrService, spinner:NgxSpinnerService) { 
+    super(spinner);
+  }
   
   frm:FormGroup;
    
