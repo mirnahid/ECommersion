@@ -5,6 +5,9 @@ using ECommersionAPI.Application;
 using FluentValidation.AspNetCore;
 using ECommersionAPI.Infrastructure;
 using ECommersionAPI.Infrastructure.Services.Storage.Azure;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +29,21 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
 }));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer("Admin",options =>
+                {
+                    options.TokenValidationParameters = new()
+                    {
+                        ValidateAudience=true,
+                        ValidateIssuer=true,
+                        ValidateLifetime=true,
+                        ValidateIssuerSigningKey=true,
+                        ValidAudience = builder.Configuration["Token:Audience"],
+                        ValidIssuer= builder.Configuration["Token:Issuer"],
+                        IssuerSigningKey=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"]))
+                    };
+                });
 
 var app = builder.Build();
 

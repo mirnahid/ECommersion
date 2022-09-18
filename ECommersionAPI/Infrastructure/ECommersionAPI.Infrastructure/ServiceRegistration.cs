@@ -1,8 +1,10 @@
 ﻿using ECommersionAPI.Application.Abstractions.Storage;
+using ECommersionAPI.Application.Abstractions.Token;
 using ECommersionAPI.Infrastructure.Enums;
 using ECommersionAPI.Infrastructure.Services.Storage;
 using ECommersionAPI.Infrastructure.Services.Storage.Azure;
 using ECommersionAPI.Infrastructure.Services.Storage.Local;
+using ECommersionAPI.Infrastructure.Services.Token;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ECommersionAPI.Infrastructure
@@ -13,6 +15,7 @@ namespace ECommersionAPI.Infrastructure
         {
             //services.AddScoped<IFileService, FileService>();
             services.AddScoped<IStorageService, StorageService>();
+            services.AddScoped<ITokenHandler, TokenHandler>();
         }
 
         public static void AddStorage<T>(this IServiceCollection services) where T : Storage, IStorage
