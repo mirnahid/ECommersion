@@ -1,6 +1,5 @@
-﻿using ECommersionAPI.Application.Abstractions.Token;
-using ECommersionAPI.Application.Dtos;
-using Google.Apis.Auth;
+﻿using ECommersionAPI.Application.Abstractions.Services;
+using ECommersionAPI.Application.Abstractions.Token;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using User = ECommersionAPI.Domain.Entities.Identity;
@@ -11,56 +10,21 @@ namespace ECommersionAPI.Application.Features.Commands.AppUser.GoogleLogin
     {
         private readonly UserManager<User.AppUser> _userManager;
         private readonly ITokenHandler _tokenHandler;
+        private readonly IAuthService _authService;
 
-        public GoogleLoginCommandHandler(UserManager<User.AppUser> userManager, ITokenHandler tokenHandler)
+        public GoogleLoginCommandHandler(UserManager<User.AppUser> userManager, ITokenHandler tokenHandler, IAuthService authService)
         {
             _userManager = userManager;
             _tokenHandler = tokenHandler;
+            _authService = authService;
         }
 
         public async Task<GoogleLoginCommandResponse> Handle(GoogleLoginCommandRequest request, CancellationToken cancellationToken)
         {
-            var settings = new GoogleJsonWebSignature.ValidationSettings()
+            var token = await _authService.GoogleLoginAsync(request.IdToken, 20);
+
+            return new()
             {
-                Audience = new List<string> { "fdsfsfsd" }
-            };
-
-            var payload= await GoogleJsonWebSignature.ValidateAsync(request.IdToken, settings);
-
-            var info= new UserLoginInfo(request.Provider, payload.Subject, request.Provider);
-
-            User.AppUser user=await _userManager.FindByLoginAsync(info.LoginProvider,info.ProviderKey);
-
-            bool result = user != null;
-
-            if (user==null)
-            {
-                user =await _userManager.FindByEmailAsync(payload.Email);
-
-                if (user==null)
-                {
-                    user = new()
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Email=payload.Email,
-                        UserName=payload.Name,
-                        NameSurname=payload.Name
-                    };
-                    var identityResult = await _userManager.CreateAsync(user);
-
-                    result = identityResult.Succeeded;
-                }
-            }
-
-            if (result)
-                await _userManager.AddLoginAsync(user, info);
-
-            else
-                throw new Exception("Error");
-
-            Token token = _tokenHandler.CreateAccessToken(5);
-
-            return new() {
                 Token = token
             };
         }

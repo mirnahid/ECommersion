@@ -1,7 +1,10 @@
-﻿using ECommersionAPI.Application.Repositories;
+﻿using ECommersionAPI.Application.Abstractions.Services;
+using ECommersionAPI.Application.Abstractions.Services.Authentications;
+using ECommersionAPI.Application.Repositories;
 using ECommersionAPI.Domain.Entities.Identity;
 using ECommersionAPI.Persistence.Contexts;
 using ECommersionAPI.Persistence.Repositories;
+using ECommersionAPI.Persistence.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,6 +23,7 @@ namespace ECommersionAPI.Persistence
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
             }).AddEntityFrameworkStores<ECommersionAPIDbContext>();
+
             services.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
             services.AddScoped<ICustomerWriteRepository, CustomerWriteRepository>();
             services.AddScoped<IOrderReadRepository, OrderReadRepository>();
@@ -32,6 +36,11 @@ namespace ECommersionAPI.Persistence
             services.AddScoped<IInvoiceFileWriteRepository, InvoiceFileWriteRepository>();
             services.AddScoped<IProductImageFileReadRepository, ProductImageFileReadRepository>();
             services.AddScoped<IProductImageFileWriteRepository, ProductImageFileWriteRepository>();
+
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IExternalAuthentication, AuthService>();
+            services.AddScoped<IInteralAuthentication, AuthService>();
         }
     }
 }

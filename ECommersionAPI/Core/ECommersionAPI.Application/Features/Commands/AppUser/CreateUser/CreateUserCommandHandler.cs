@@ -1,40 +1,31 @@
-﻿using ECommersionAPI.Application.Exceptions;
+﻿using ECommersionAPI.Application.Abstractions.Services;
+using ECommersionAPI.Application.Dtos.User;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
-using U = ECommersionAPI.Domain.Entities.Identity; 
 namespace ECommersionAPI.Application.Features.Commands.AppUser.CreateUser
 {
     internal class CreateUserCommandHandler : IRequestHandler<CreateUserCommandRequest, CreateUserCommandResponse>
     {
-        private readonly UserManager<U.AppUser> _userManager;
+        private readonly IUserService _userService;
 
-        public CreateUserCommandHandler(UserManager<U.AppUser> userManager)
+        public CreateUserCommandHandler(IUserService userService)
         {
-            _userManager=userManager;
+            _userService = userService;
         }
         public async Task<CreateUserCommandResponse> Handle(CreateUserCommandRequest request, CancellationToken cancellationToken)
         {
-            IdentityResult result= await _userManager.CreateAsync(new()
+            CreateUserResponse response = await _userService.CreateAsync(new()
             {
-                Id=Guid.NewGuid().ToString(),
-                UserName=request.UserName,
-                Email=request.Email,
-                NameSurname=request.NameSurname
-            },request.Password);;
-
-            if (result.Succeeded)
-            {
-                return new()
-                {
-                    Succeeded = true,
-                    Message = "User successfully created"
-                };
-            }
+                Username = request.UserName,
+                Email = request.Email,
+                NameSurname = request.NameSurname,
+                Password = request.Password,
+                PasswordConfirm = request.ConfirmPassword
+            });
 
             return new()
             {
-                Succeeded = false,
-                Message = "something went wrong :)"
+                Message = response.Message,
+                Succeeded = response.Succeeded
             };
         }
     }
