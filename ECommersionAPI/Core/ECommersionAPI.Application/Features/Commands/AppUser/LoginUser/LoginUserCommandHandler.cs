@@ -1,47 +1,24 @@
-﻿using ECommersionAPI.Application.Abstractions.Token;
-using ECommersionAPI.Application.Dtos;
-using ECommersionAPI.Application.Exceptions;
+﻿using ECommersionAPI.Application.Abstractions.Services;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
-using U = ECommersionAPI.Domain.Entities.Identity;
 
 namespace ECommersionAPI.Application.Features.Commands.AppUser.LoginUser
 {
     public class LoginUserCommandHandler : IRequestHandler<LoginUserCommandRequest, LoginUserCommandResponse>
     {
-        private readonly UserManager<U.AppUser> _userManager;
-        private readonly SignInManager<U.AppUser> _signInManager;
-        private readonly ITokenHandler _tokenHandler;
+        private readonly IAuthService _authService;
 
-        public LoginUserCommandHandler(UserManager<U.AppUser> userManager, SignInManager<U.AppUser> signInManager,ITokenHandler tokenHandler)
+        public LoginUserCommandHandler(IAuthService authService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _tokenHandler = tokenHandler;
+            _authService = authService;
         }
 
         public async Task<LoginUserCommandResponse> Handle(LoginUserCommandRequest request, CancellationToken cancellationToken)
         {
-            U.AppUser user = await _userManager.FindByNameAsync(request.UserNameOrEmail);
-            if (user == null)
-                user = await _userManager.FindByEmailAsync(request.UserNameOrEmail);
+            var token = await _authService.LoginAsync(request.UserNameOrEmail, request.Password, 20);
 
-            if (user == null)
-                throw new NotFoundUserException();
-
-            SignInResult result = await _signInManager.CheckPasswordSignInAsync(user, request.Password,false);
-            if (result.Succeeded)
+            return new LoginUserSuccessCommandResponse()
             {
-                Token token = _tokenHandler.CreateAccessToken(5);
-                return new LoginUserSuccessCommandResponse()
-                {
-                    Token = token
-                };
-            }
-
-            return new LoginUserErrorCommandResponse()
-            {
-                Message = "Error"
+                AccessToken = token
             };
         }
     }

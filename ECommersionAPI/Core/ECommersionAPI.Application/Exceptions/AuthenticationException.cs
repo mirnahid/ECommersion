@@ -2,9 +2,9 @@
 
 namespace ECommersionAPI.Application.Exceptions
 {
-    internal class AuthenticationException : Exception
+    public class AuthenticationException : Exception
     {
-        public AuthenticationException():base("authentication error")
+        public AuthenticationException() : base("authentication error")
         {
         }
 
